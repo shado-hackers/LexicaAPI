@@ -52,68 +52,7 @@ class Client:
         resp = self._request(url=f'{self.url}/models')
         return resp
     
-    def ChatCompletion(self : "Client", prompt: str,model : dict = languageModels.palm ,*args, **kwargs) -> dict:
-        """ 
-        Get an answer from LLMs' for the given prompt
-        Example:
-        >>> client = Client()
-        >>> response = client.ChatCompletion("Hello, Who are you?",0)
-        >>> print(response)
-
-        Args:
-            prompt (str): Input text for the query.
-            model (dict): Model dict of the LLM defaults to palm.
-
-        Returns:
-            dict: Answer from the API in the following format:
-                {
-                    "message": str,
-                    "content": str,
-                    "code": int
-                }
-        """
-        params = {
-            "prompt": prompt,
-            "model_id": model.get('modelId',0),
-        }
-        resp = self._request(
-            url=f'{self.url}/models',
-            method='POST',
-            params=params,
-            json=kwargs.get('json',{}),
-            headers={"content-type": "application/json"}
-            )
-        return resp
-
-    def upscale(self : "Client", image: bytes= None, image_url: str= None,format: str = "binary") -> bytes:
-        """ 
-        Upscale an image
-        Example:
-        >>> client = Client()
-        >>> response = client.upscale(image)
-        >>> with open('upscaled.png', 'wb') as f:
-                f.write(response)
-
-        Args:
-            image (bytes): Image in bytes.
-        Returns:
-            bytes: Upscaled image in bytes.
-        """
-        payload = {
-            "format": format,
-        }
-        if image and not image_url:
-            payload.setdefault('image_data',base64.b64encode(image).decode('utf-8'))
-        elif not image and not image_url:
-            raise Exception("Either image or image_url is required")
-        else:
-            payload.setdefault('image_url',image_url)
-        content = self._request(
-            url=f'{self.url}/upscale',
-            method = 'POST',
-            json=payload
-        )
-        return content
+    
 
     def generate(self : "Client",model_id:int,prompt:str,negative_prompt:str="",images: int=1) -> dict:
         """ 
@@ -222,7 +161,6 @@ class Client:
         Args:
             platform (str): social media platform name.
             url (str): url of the post.
-
         Returns:
             dict: Answer from the API in the following format:
                 {
