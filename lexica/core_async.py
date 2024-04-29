@@ -35,7 +35,7 @@ class AsyncClient:
                 method=kwargs.get('method', 'GET'),
                 url=kwargs.get('url'),
                 headers=self.headers,
-                content=kwargs.get('content'),
+                #content=kwargs.get('content'),
                 params=kwargs.get('params'),
                 data=contents.get('data'),
                 json=contents.get('json'),
