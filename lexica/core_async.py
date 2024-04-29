@@ -62,68 +62,6 @@ class AsyncClient:
         """Close async session"""
         return await self.session.aclose()
 
-    async def ChatCompletion(self : "AsyncClient", prompt: str,model : dict = languageModels.palm2,*args, **kwargs) -> dict:
-        """
-        Get an answer from LLMs' for the given prompt
-        Example:
-        >>> client = AsyncClient()
-        >>> response = await client.ChatCompletion("Hello, Who are you?")
-        >>> print(response)
-
-        Args:
-            prompt (str): Input text for the query.
-            model (dict): Model dict of the LLM defaults to palm.
-
-        Returns:
-            dict: Answer from the API in the following format:
-                {
-                    "status": str,
-                    "content": str,
-                    "code": int
-                }
-        """
-        params = {
-            "model_id": model.get('modelId',0),
-            "prompt": prompt,
-        }
-        resp = await self._request(
-            url=f'{self.url}/models',
-            method='POST',
-            params=params,
-            json=kwargs.get('json',{}),
-            headers = {"content-type": "application/json"}
-        )
-        return resp
-
-    async def upscale(self : "AsyncClient", image: bytes= None, image_url: str= None,format: str = "binary") -> bytes:
-        """ 
-        Upscale an image
-        Example:
-        >>> client = AsyncClient()
-        >>> response = await client.upscale(image)
-        >>> with open('upscaled.png', 'wb') as f:
-                f.write(response)
-
-        Args:
-            image (bytes): Image in bytes.
-        Returns:
-            bytes: Upscaled image in bytes.
-        """
-        payload = {
-            "format": format,
-        }
-        if image and not image_url:
-            payload.setdefault('image_data',base64.b64encode(image).decode('utf-8'))
-        elif not image and not image_url:
-            raise Exception("No image or image_url provided")
-        else:
-            payload.setdefault('image_url',image_url)
-        content = await self._request(
-            url=f'{self.url}/upscale',
-            method = 'POST',
-            json=payload
-        )
-        return content
     
     async def generate(self : "AsyncClient",model_id:int,prompt:str,negative_prompt:str="",images: int= 1) -> dict:
         """ 
